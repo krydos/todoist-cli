@@ -9,6 +9,7 @@ Command list
  - **todoist p ls** - get list of projects
 
 
-Thanks to @MicahElliott for colortrans.py script
+Thanks to [@MicahElliott][2] for colortrans.py script
 
   [1]: https://todoist.com/
+  [2]: https://github.com/MicahElliott
