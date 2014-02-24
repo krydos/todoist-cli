@@ -3,29 +3,39 @@ import urllib2
 import json
 import colortrans
 import sys
+import todoist_functions
 
 COLOR_OUTPUT = False
 
 class Todoist:
 
-    token = "<TOKEN FROM TODOIST USER SETTINGS MENU"
+    #token = "<TOKEN FROM TODOIST USER SETTINGS MENU"
+    token = "c067009bfb0ca72c2dcc90d88ad0a777a9d8cadd"
     todoist_api_url = "http://todoist.com/API/"
 
     """ get all project """
     def getProjects(self):
-        return self._do_get_request(self.todoist_api_url + 'getProjects?token=' + self.token)
+        t = todoist_functions.ToDoIst(token=self.token)
+        return t.getProjects();
 
     """ get all tasks """
     def getUncompletedTasks(self, project_id):
-        return self._do_get_request(self.todoist_api_url + 'getUncompletedItems?token=' + self.token + '&project_id=' + str(project_id))
+        t = todoist_functions.ToDoIst(token=self.token)
+        return t.getUncompletedItems(project_id);
 
     """ get all tasks for today """
     def getTodayTasks(self):
-        return self._do_get_request(self.todoist_api_url + 'query?token=' + self.token + '&queries=["tod"]')
+        t = todoist_functions.ToDoIst(token=self.token)
+        #TODO get today tasks
+        return t.query({"tod"});
 
-    """ get all tasks for today """
+    """ get all tasks for tomorrow """
     def getTomTasks(self):
         return self._do_get_request(self.todoist_api_url + 'query?token=' + self.token + '&queries=["tom"]')
+
+    """ get all tasks for 7 days """
+    def get7dTasks(self):
+        pass
 
     """ get all tasks for query """
     def getQueryTasks(self, query):
@@ -66,7 +76,7 @@ try:
     # if user want to get list of all projects
     if arguments[0] == 'p':
         if arguments[1] == 'ls':
-            json_projects = json.loads(todoist.getProjects())
+            json_projects = todoist.getProjects()
 
             for project in json_projects:
                 if COLOR_OUTPUT == True:
@@ -77,9 +87,9 @@ try:
 
     # if user want to get list of all tasks
     if arguments[0] == 'ls' and len(arguments) == 1:
-        json_projects = json.loads(todoist.getProjects())
+        json_projects = todoist.getProjects()
         for project in json_projects:
-            json_tasks = json.loads(todoist.getUncompletedTasks(project['id']))
+            json_tasks = todoist.getUncompletedTasks(project['id'])
 
             for task in json_tasks:
                 if COLOR_OUTPUT == True:
@@ -100,6 +110,13 @@ try:
 
         if arguments[1] == 'tom':
             json_tasks = json.loads(todoist.getTomTasks())
+            json_tasks = json_tasks[0]['data']
+            for task in json_tasks:
+                print task['content']
+                print "\n"
+
+        if arguments[1] == '7d':
+            json_tasks = json.loads(todoist.get7dTasks())
             json_tasks = json_tasks[0]['data']
             for task in json_tasks:
                 print task['content']
